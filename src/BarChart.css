@@ -1,0 +1,18 @@
+.chart {
+  margin-top: auto;
+  display: block;
+}
+
+.tooltip {
+  opacity: 0;
+  background-color: black;
+  color: white;
+  border-radius: 8px;
+  padding: 4px 8px;
+  white-space: pre;
+  font-size: .9rem;
+  width: fit-content;
+  align-self: center;
+  position: absolute;
+  bottom: 425px;
+}
