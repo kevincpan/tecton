@@ -15,6 +15,9 @@ const CELL_WIDTH = 150;
 export const Table = React.memo(({ columns, data }) => {
   const defaultColumn = useMemo(() => ({ width: CELL_WIDTH }), []);
 
+  //windows scrollbar takes up 17px so we need this padding. if mac we dont need
+  const scrollbarOffset = navigator.userAgent.includes('Mac OS X') ? 0 : 17;
+
   const [tableHeight, setTableHeight] = useState(
     window.innerHeight - TABLE_BOTTOM_OFFSET
   );
@@ -178,7 +181,7 @@ export const Table = React.memo(({ columns, data }) => {
           height={tableHeight}
           itemCount={rows.length}
           itemSize={75}
-          width={totalColumnsWidth + 17}
+          width={totalColumnsWidth + scrollbarOffset}
         >
           {RenderRow}
         </FixedSizeList>
