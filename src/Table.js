@@ -43,10 +43,12 @@ export const Table = React.memo(({ columns, data }) => {
     prepareRow,
   } = useTable({ columns, data, defaultColumn }, useSortBy, useBlockLayout);
 
+  /** Summary obejct that holds all summary data. key = column id, value = summary data */
   const summary = useMemo(() => {
     const results = {};
 
     columns.forEach((col) => {
+      //if data is numbers
       if (!col.isDate && col.sortType !== 'basic') {
         const [min, max] = d3
           .extent(data, (d) => parseFloat(d[col.accessor]))
@@ -61,6 +63,7 @@ export const Table = React.memo(({ columns, data }) => {
             .toFixed(2),
           nullCount: data.length - count(data, (d) => d[col.accessor]),
         };
+        //data is date
       } else if (col.isDate) {
         let nullCount = 0;
         data.forEach((row) => {
@@ -82,6 +85,7 @@ export const Table = React.memo(({ columns, data }) => {
           max,
           nullCount,
         };
+        //data is string
       } else {
         let nullCount = 0;
         let uniqueValues = new Set();
@@ -121,7 +125,9 @@ export const Table = React.memo(({ columns, data }) => {
           {row.cells.map((cell) => {
             return (
               <div {...cell.getCellProps()} className='tdBox'>
-                <div className='td'>{cell.render('Cell')}</div>
+                <div className='td'>
+                  <span className='cellContent'>{cell.render('Cell')}</span>
+                </div>
               </div>
             );
           })}

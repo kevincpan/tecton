@@ -92,7 +92,7 @@ function App() {
         let headerObj = {
           Header: humanize(col),
           accessor: col,
-          sortType: 'basic'
+          sortType: 'basic',
         };
         //code here is hacky, we would ideally check more values to see what the data type of this column is
         //or just have the type passed from the server. if index 0 is malformed, would ruin whole column as is

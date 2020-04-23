@@ -24,11 +24,9 @@
 .td {
   overflow: auto;
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
   height: 100%;
   border-bottom: 1px solid white;
-  border-right: 1px solid white;  
+  border-right: 1px solid white;
   overflow-wrap: break-word;
   padding: 0 8px;
   word-break: break-all;
@@ -38,7 +36,7 @@
   border-bottom: 0;
 }
 
-.tdBox:first-child{
+.tdBox:first-child {
   border-left: 1px solid white;
 }
 
@@ -62,4 +60,9 @@
   padding: 4px;
   box-sizing: border-box;
   line-height: 24px;
+}
+
+.cellContent {
+  margin-top: auto;
+  margin-bottom: auto;
 }
