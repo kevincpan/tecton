@@ -38,8 +38,6 @@ function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(process.env.NODE_ENV);
-
   //initalize dataList
   useEffect(() => {
     getDataList();
