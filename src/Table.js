@@ -8,7 +8,6 @@ import * as d3 from 'd3';
 import { count } from 'd3-array';
 import './Table.css';
 
-const TABLE_BOTTOM_OFFSET = 500;
 const CELL_WIDTH = 150;
 
 //based off of: https://codesandbox.io/embed/github/tannerlinsley/react-table/tree/master/examples/sorting and other examples
@@ -17,22 +16,28 @@ export const Table = React.memo(({ columns, data }) => {
 
   //windows scrollbar takes up 17px so we need this padding. if mac we dont need
   const scrollbarOffset = navigator.userAgent.includes('Mac OS X') ? 0 : 17;
+  const [hideSummary, setHideSummary] = useState(false);
+
+  const tableBottomOffset = 540 - (hideSummary ? 280 : 0);
 
   const [tableHeight, setTableHeight] = useState(
-    window.innerHeight - TABLE_BOTTOM_OFFSET
+    window.innerHeight - tableBottomOffset
   );
 
   //sets table height, and listens for window resize to reset table height
   useEffect(() => {
     const throttledWindowResize = throttle(() => {
-      setTableHeight(window.innerHeight - TABLE_BOTTOM_OFFSET);
+      setTableHeight(window.innerHeight - tableBottomOffset);
     }, 50);
+
+    throttledWindowResize();
+
     window.addEventListener('resize', throttledWindowResize);
     return () => {
       window.removeEventListener('resize', throttledWindowResize);
       throttledWindowResize.cancel();
     };
-  }, []);
+  }, [tableBottomOffset]);
 
   const {
     getTableProps,
@@ -120,7 +125,7 @@ export const Table = React.memo(({ columns, data }) => {
           {...row.getRowProps({
             style,
           })}
-          className='tr'
+          className={`tr ${index % 2 && 'light'}`}
         >
           {row.cells.map((cell) => {
             return (
@@ -166,36 +171,39 @@ export const Table = React.memo(({ columns, data }) => {
   );
 
   return (
-    <div {...getTableProps()} className='table'>
-      <div>
-        {headerGroups.map((headerGroup) => (
-          <div {...headerGroup.getHeaderGroupProps()} className='tr'>
-            {headerGroup.headers.map((column) => (
-              <div {...column.getHeaderProps()} className='thBox'>
-                <div className='th'>
-                  <div {...column.getSortByToggleProps()} className='header'>
-                    <strong>{column.render('Header')}</strong>
-                    {column.isSorted ? (column.isSortedDesc ? ' ^' : ' v') : ''}
+    <>
+      <button className='hideSummary' onClick={()=>{setHideSummary(prev=>!prev)}}>{`${hideSummary?'Show' : 'Hide'} Summary Stats`}</button>
+      <div {...getTableProps()} className='table'>
+        <div>
+          {headerGroups.map((headerGroup) => (
+            <div {...headerGroup.getHeaderGroupProps()} className='tr'>
+              {headerGroup.headers.map((column) => (
+                <div {...column.getHeaderProps()} className='thBox'>
+                  <div className='th'>
+                    <button {...column.getSortByToggleProps()} title={column.render('Header')} className={`header `}>
+                      <strong>{column.render('Header')}</strong>
+                      <div className={`sortIndicator ${column.isSorted ? (column.isSortedDesc ? 'asc' : 'desc') : ''}`}></div>
+                    </button>
+                    {!hideSummary && summary[column.id] !== undefined &&
+                      renderSummary(column.id, summary[column.id].type)}
                   </div>
-                  {summary[column.id] !== undefined &&
-                    renderSummary(column.id, summary[column.id].type)}
                 </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+              ))}
+            </div>
+          ))}
+        </div>
 
-      <div {...getTableBodyProps()} className='tableWrapper'>
-        <FixedSizeList
-          height={tableHeight}
-          itemCount={rows.length}
-          itemSize={75}
-          width={totalColumnsWidth + scrollbarOffset}
-        >
-          {renderRow}
-        </FixedSizeList>
+        <div {...getTableBodyProps()} className='tableWrapper'>
+          <FixedSizeList
+            height={tableHeight}
+            itemCount={rows.length}
+            itemSize={75}
+            width={totalColumnsWidth + scrollbarOffset}
+          >
+            {renderRow}
+          </FixedSizeList>
+        </div>
       </div>
-    </div>
+    </>
   );
 });
