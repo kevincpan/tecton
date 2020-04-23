@@ -14,7 +14,6 @@ const MOMENT_FORMATS = [
 ];
 
 const WEIRD_TIME_FORMAT = 'HH:mm:ss.000';
-const isProd = process.env.REACT_APP_IS_PROD;
 
 //from react-table basic sort but parse float... since checking every value for if it is a valid date is super taxing
 const BASIC_SORT_PARSE_FLOAT = (rowA, rowB, columnId) => {
@@ -43,9 +42,11 @@ function App() {
   }, []);
 
   const getDataList = async () => {
-    const url = isProd
-      ? 'https://s3-us-west-2.amazonaws.com/tecton.ai.public/coding_exercise_1/tables.json'
-      : '/tables.json';
+    //dev
+    // const url = '/tables.json';
+    //prod
+    const url = 'https://s3-us-west-2.amazonaws.com/tecton.ai.public/coding_exercise_1/tables.json';
+
     try {
       setLoading(true);
       const request = await fetch(url);
@@ -88,16 +89,13 @@ function App() {
         let headerObj = {
           Header: humanize(col),
           accessor: col,
-          sortType: 'basic',
+          sortType: 'basic'
         };
         //code here is hacky, we would ideally check more values to see what the data type of this column is
         //or just have the type passed from the server. if index 0 is malformed, would ruin whole column as is
         if (moment(data[0][col], MOMENT_FORMATS, true).isValid()) {
           headerObj.isDate = true;
-        } else if (
-          !isNaN(parseFloat(data[0][col])) &&
-          !moment(data[0][col], WEIRD_TIME_FORMAT, true).isValid()
-        ) {
+        } else if (!isNaN(parseFloat(data[0][col])) && !moment(data[0][col], WEIRD_TIME_FORMAT, true).isValid()) {
           headerObj.sortType = BASIC_SORT_PARSE_FLOAT;
         }
 
@@ -111,20 +109,16 @@ function App() {
   return (
     <div className='App'>
       <h1>Tecton Data Viewer</h1>
-      {dataListFailed && (
-        <button className='fetchButton' onClick={getDataList}>
-          Fetch Data List
-        </button>
-      )}
+      {dataListFailed && <button className='fetchButton' onClick={getDataList}>Fetch Data List</button>}
       <div className='dataList'>
         {dataList.map((e, i) => (
           <button
             key={i}
             onClick={() => {
-              isProd ? 
-                getData(devFilePathHelper(e.url))
-                :
-                getData(e.url)
+              //dev
+              // getData(devFilePathHelper(e.url));
+              //prod
+              getData(e.url);
             }}
           >
             {`${e.name} - rows: ${e.row_count}`}
