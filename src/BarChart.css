@@ -14,6 +14,6 @@
   width: fit-content;
   align-self: center;
   position: absolute;
-  top: 240px;
+  bottom: 150px;
   pointer-events: none;
 }

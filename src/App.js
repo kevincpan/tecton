@@ -44,6 +44,7 @@ function App() {
   }, []);
 
   const getDataList = async () => {
+    //get around cors for local dev
     const url = isProd
       ? 'https://s3-us-west-2.amazonaws.com/tecton.ai.public/coding_exercise_1/tables.json'
       : '/tables.json';
@@ -52,7 +53,7 @@ function App() {
       setLoading(true);
       const request = await fetch(url);
       const data = await request.json();
-      setDataList([...data]);
+      setDataList(data);
     } catch (e) {
       setDataListFailed(true);
     }
@@ -68,6 +69,7 @@ function App() {
     setLoading(false);
   };
 
+  //get around cors for local dev
   const devFilePathHelper = (url) => {
     const arr = url.split('/');
     return arr[arr.length - 1];
@@ -90,7 +92,7 @@ function App() {
         let headerObj = {
           Header: humanize(col),
           accessor: col,
-          sortType: 'basic',
+          sortType: 'basic'
         };
         //code here is hacky, we would ideally check more values to see what the data type of this column is
         //or just have the type passed from the server. if index 0 is malformed, would ruin whole column as is
@@ -123,6 +125,7 @@ function App() {
           <button
             key={i}
             onClick={() => {
+              //get around cors for local dev
               isProd ? getData(e.url) : getData(devFilePathHelper(e.url));
             }}
           >
@@ -133,7 +136,8 @@ function App() {
       {loading && <div className='spinner' />}
       {!loading && data.length > 0 && (
         <>
-          <Table columns={headers} data={data} /> Actual rowcount: {data.length}
+          Actual rowcount: {data.length}
+          <Table columns={headers} data={data} />
         </>
       )}
     </div>

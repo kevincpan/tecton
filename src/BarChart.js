@@ -87,7 +87,6 @@ export const BarChart = React.memo(
     return (
       <>
         <div className='tooltip' ref={tooltipRef}>
-          hi
         </div>
         <svg className='chart' ref={svgRef} width={width} height={height} />
       </>

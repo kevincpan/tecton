@@ -22,6 +22,7 @@ export const Table = React.memo(({ columns, data }) => {
     window.innerHeight - TABLE_BOTTOM_OFFSET
   );
 
+  //sets table height, and listens for window resize to reset table height
   useEffect(() => {
     const throttledWindowResize = throttle(() => {
       setTableHeight(window.innerHeight - TABLE_BOTTOM_OFFSET);
@@ -47,7 +48,9 @@ export const Table = React.memo(({ columns, data }) => {
 
     columns.forEach((col) => {
       if (!col.isDate && col.sortType !== 'basic') {
-        const [min,max] = d3.extent(data, (d) => parseFloat(d[col.accessor])).map(val=>val.toFixed(2));
+        const [min, max] = d3
+          .extent(data, (d) => parseFloat(d[col.accessor]))
+          .map((val) => val.toFixed(2));
         results[col.accessor] = {
           type: 'number',
           min,
@@ -69,7 +72,9 @@ export const Table = React.memo(({ columns, data }) => {
           }
         });
 
-        const [min, max] = d3.extent(data, (d) => d[col.accessor]).map(val=>moment(val).format(moment.HTML5_FMT.DATE));
+        const [min, max] = d3
+          .extent(data, (d) => d[col.accessor])
+          .map((val) => moment(val).format(moment.HTML5_FMT.DATE));
 
         results[col.accessor] = {
           type: 'date',
@@ -89,7 +94,6 @@ export const Table = React.memo(({ columns, data }) => {
           } else {
             uniqueValues.add(row[col.accessor]);
           }
-
         });
 
         results[col.accessor] = {
@@ -103,7 +107,7 @@ export const Table = React.memo(({ columns, data }) => {
     return results;
   }, [columns, data]);
 
-  const RenderRow = React.useCallback(
+  const renderRow = React.useCallback(
     ({ index, style }) => {
       const row = rows[index];
       prepareRow(row);
@@ -132,14 +136,14 @@ export const Table = React.memo(({ columns, data }) => {
       let summaryData = summary[id];
       return (
         <>
-        <div className='summary'>
-          {Object.keys(summaryData).map((key) => (
-            <div key={key}>
-              {key}: {summaryData[key]}
-            </div>
-          ))}          
-        </div>
-        {(type === 'number') && (
+          <div className='summary'>
+            {Object.keys(summaryData).map((key) => (
+              <div key={key}>
+                {key}: {summaryData[key]}
+              </div>
+            ))}
+          </div>
+          {type === 'number' && (
             <BarChart
               width={CELL_WIDTH}
               height={CELL_WIDTH}
@@ -183,7 +187,7 @@ export const Table = React.memo(({ columns, data }) => {
           itemSize={75}
           width={totalColumnsWidth + scrollbarOffset}
         >
-          {RenderRow}
+          {renderRow}
         </FixedSizeList>
       </div>
     </div>
